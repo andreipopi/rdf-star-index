@@ -1,0 +1,31 @@
+
+: pieter a Person
+?p a Person
+?po -> index[(a,Person)] = (pieter a Person)
+
+
+?person ?property Person
+??o -> index[(Person)] = (pieter a Person)
+
+
+?p a Person ^ ?p hasMaster :CS => ?p a ComputerScientist
+
+Pieter a Person
+
+
+index[a Person]= Rule
+
+index[hasMaster :CS] = Rule
+
+{?p -> Pieter}
+
+Pieter a Person ^ Pieter HasMaster:CS
+
+Pieter :hasMaster :CS is defined
+
+Pieter a ComputerScientist
+
+?p a Person OR ?p hasMaster :CS => ?p a ComputerScientist
+
+?p a Person => ?p a ComputerScientist
+?p hasMaster :CS => ?p a ComputerScientist
