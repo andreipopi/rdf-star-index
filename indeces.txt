@@ -96,13 +96,14 @@ spo
 [s3, [p31]]
 [s4, [p31,p32]]
 [s60, [p60]]
-
-
-
-
-
-
-
 pos
 
 ? p29 o31
+
+
+
+SOP
+{'Pallino': {'o31': array(['p31', 'p32']), 'o49': array(['p31']}, 
+   'Marco': {'o62': array(['p60']), 'o60': array(['p60'])}, 
+   'Andrei': {'o31': array(['p31']), 'o63': array(['p29']), 'o65': array(['p29'])}, 
+   'Pippo': {'o31': array(['p31'])}})

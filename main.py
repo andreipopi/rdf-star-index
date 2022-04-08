@@ -3,7 +3,6 @@ import numpy as np
 
 # Functions
 
-
 # creates a list of all subjects, a list of all predicates, and a list of all objects
 def initialise(sArr, pArr, oArr):
     objectsFile = open('objects.txt', 'r')
@@ -30,7 +29,6 @@ def initialise(sArr, pArr, oArr):
         pArr = np.vstack([pArr, [index, prop]])
         index += 1
     return sArr, pArr, oArr
-
 
 def print_store():
     for triple in store:
@@ -68,27 +66,30 @@ def naive_lookup(subj,pred,obj):
     return matching_triples
 
 def lookup_on_spo(subj, pred, obj):
-    
-    #assume spo for var ? ? 
-    index = get_index(subj, pred, obj)
     matching_triples = np.array([])
     matching_triples.shape = (0,3)
-
     for p in spoIndex[subj]:
         for obj in spoIndex[subj][p]:
             matching_triples = np.vstack([matching_triples, [subj,p,obj]])
-
     return matching_triples
 
 def lookup_on_pso(subj, pred, obj):
     matching_triples = np.array([])
     matching_triples.shape = (0,3)
-
-    for subj in psoIndex[pred]:
-        for obj in psoIndex[pred][subj]:
-            matching_triples = np.vstack([matching_triples, [subj,pred,obj]])
+    for s in psoIndex[pred]:
+        if s == subj:
+            for obj in psoIndex[pred][s]:
+                matching_triples = np.vstack([matching_triples, [s,pred,obj]])
     return matching_triples
 
+def lookup_on_sop(subj, pred, obj):
+    matching_triples = np.array([])
+    matching_triples.shape = (0,3)
+    for o in sopIndex[subj]:
+        if o == obj:
+            for p in sopIndex[subj][o]:
+                matching_triples = np.vstack([matching_triples, [subj,p,o]])
+    return matching_triples
 
 # End Functions
 
@@ -137,42 +138,49 @@ print(oArr)
 spoIndex = {}
 for id, subject in sArr:
     predArr = {}
-
     for s,p,o in store:
         if subject == s:
             if p not in predArr:
                 objArr = np.array([])
-
                 for s1,p1,o1 in store:
                     if s == s1 and p1 == p and o1 not in objArr:
                         objArr = np.append(objArr,o1) # this should be optimised to store the index of the object so then objects shared from spo and pso
                 predArr[p] = objArr
-                print(objArr)
     spoIndex[subject] = predArr
 
+print("spo index", spoIndex)
 
 #### pso Index ####
 psoIndex = {}
 for id, property in pArr:
     subjArr = {}
-
     for s,p,o in store:
         if property == p:
             if s not in subjArr:
                 objArr = np.array([])
-
                 for s1,p1,o1 in store:
                     if s == s1 and p1 == p and o1 not in objArr:
                         objArr = np.append(objArr,o1) # this should be optimised to store the index of the object so then objects shared from spo and pso
                 subjArr[s] = objArr
-                print(objArr)
     psoIndex[property] = subjArr
 
-print("psoIndex",psoIndex)
+print("pso index", psoIndex)
 
-psoMpa = np.array([])
+#### sop Index ####
+sopIndex = {}
+for id, subject in sArr:
+    objArr = {}
+    for s,p,o in store:
+        if subject == s:
+            if o not in objArr:
+                propArr = np.array([])
+                for s1,p1,o1 in store:
+                    if s == s1 and o1 == o and p1 not in propArr:
+                        propArr = np.append(propArr,p1)
+                objArr[o] = propArr
+    sopIndex[subject] = objArr
 
-sopMap = np.array([])
+print("sopIndex", sopIndex)
 ospMap = np.array([])
 
 pos = np.array([])
@@ -183,34 +191,17 @@ query0 = ["Andrei", "?var1", "?var2"]
 #print(lookup_on_spo("Andrei","?var1","o31"))
 
 query1 = ["?var1", "p31","o31"]
-print(lookup_on_pso("?var1", "p31", "o31"))
+
+print(lookup_on_pso("Andrei", "p31", "?var1")) #PSO
 
 query2 = ["?var1", "p31","?var2"]
+# sop
+
+print(lookup_on_sop("Marco", "?var", "o60")) #SOP
 
 #our index is now s -> s52
 #print(get(query[0]))
 
 # Naive triple extraction 
 #print(naive_lookup(query[0],query[1],query[2]))
-
-# Basic Index extraction
-
-# Hexastore
-
-
-
-# sop, 
-# osp, 
-# pso, 
-# spo, 
-
-# pos, 
-# ops.
-
-
-
-# Vertical Partitioning
-
-#
-
 
