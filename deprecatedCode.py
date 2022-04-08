@@ -54,3 +54,11 @@ for id, subject in sArr:
             predArr = np.vstack([predArr])
 
         print(predArr)
+
+
+# Create triple store with fake triples in a foor loop
+#for i in range(0,100):
+#    triple = ["s"+str(i), "p"+str(i), "o"+str(i)]
+#    print(triple)
+#    store = np.vstack([store, triple])
+#print_store()

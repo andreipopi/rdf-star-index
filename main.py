@@ -34,9 +34,6 @@ def print_store():
     for triple in store:
         print(triple)
 
-def read_store():
-    return
-
 def get_index(s,p,o):
     if ("?" in s) and ("?" in p) and ("?" in o): # ? ? ?
         return ""
@@ -69,15 +66,16 @@ def lookup_on_spo(subj, pred, obj):
     matching_triples = np.array([])
     matching_triples.shape = (0,3)
     for p in spoIndex[subj]:
-        for obj in spoIndex[subj][p]:
-            matching_triples = np.vstack([matching_triples, [subj,p,obj]])
+        if p == pred:#what if pred contains ?
+            for obj in spoIndex[subj][p]:
+             matching_triples = np.vstack([matching_triples, [subj,p,obj]])
     return matching_triples
 
 def lookup_on_pso(subj, pred, obj):
     matching_triples = np.array([])
     matching_triples.shape = (0,3)
     for s in psoIndex[pred]:
-        if s == subj:
+        if s == subj: #what if s contains ?
             for obj in psoIndex[pred][s]:
                 matching_triples = np.vstack([matching_triples, [s,pred,obj]])
     return matching_triples
@@ -86,35 +84,21 @@ def lookup_on_sop(subj, pred, obj):
     matching_triples = np.array([])
     matching_triples.shape = (0,3)
     for o in sopIndex[subj]:
-        if o == obj:
+        if o == obj: #  what if o contains ?
             for p in sopIndex[subj][o]:
                 matching_triples = np.vstack([matching_triples, [subj,p,o]])
     return matching_triples
 
 # End Functions
 
-
 # create triple store from file 
 store = np.array([])
 store.shape = (0,3)
-print("shape",store.shape)
 storeFile = open('store.txt', 'r')
 Lines = storeFile.readlines()
-print(Lines)
 for line in Lines:
     array = eval(line)
-    print("array",array)
     store = np.vstack([store,  array])
-
-print("sshape after", store.shape)
-
-# Create triple store with fake triples in a foor loop
-#for i in range(0,100):
-#    triple = ["s"+str(i), "p"+str(i), "o"+str(i)]
-#    print(triple)
-#    store = np.vstack([store, triple])
-#print_store()
-
 
 sArr = np.array([])
 sArr.shape = (0,2)
@@ -148,8 +132,7 @@ for id, subject in sArr:
                 predArr[p] = objArr
     spoIndex[subject] = predArr
 
-print("spo index", spoIndex)
-
+print(spoIndex)
 #### pso Index ####
 psoIndex = {}
 for id, property in pArr:
@@ -159,12 +142,10 @@ for id, property in pArr:
             if s not in subjArr:
                 objArr = np.array([])
                 for s1,p1,o1 in store:
-                    if s == s1 and p1 == p and o1 not in objArr:
+                    if s == s1 and p1 == property and o1 not in objArr:
                         objArr = np.append(objArr,o1) # this should be optimised to store the index of the object so then objects shared from spo and pso
                 subjArr[s] = objArr
     psoIndex[property] = subjArr
-
-print("pso index", psoIndex)
 
 #### sop Index ####
 sopIndex = {}
@@ -175,32 +156,28 @@ for id, subject in sArr:
             if o not in objArr:
                 propArr = np.array([])
                 for s1,p1,o1 in store:
-                    if s == s1 and o1 == o and p1 not in propArr:
+                    if (s == s1) and (o1 == o) and (p1 not in propArr) and (p1 in pArr):
                         propArr = np.append(propArr,p1)
                 objArr[o] = propArr
     sopIndex[subject] = objArr
 
-print("sopIndex", sopIndex)
-ospMap = np.array([])
 
+ospMap = np.array([])
 pos = np.array([])
 ops = np.array([])
 
-query0 = ["Andrei", "?var1", "?var2"]
 
-#print(lookup_on_spo("Andrei","?var1","o31"))
+print(lookup_on_spo("Pallino","p31","?var4")) #SPO    s p ?
 
-query1 = ["?var1", "p31","o31"]
+print(lookup_on_pso("Andrei", "p31", "?var1")) #PSO   s p ?
 
-print(lookup_on_pso("Andrei", "p31", "?var1")) #PSO
+print(lookup_on_sop("Marco", "?var", "o60")) #SOP     s ? o
 
-query2 = ["?var1", "p31","?var2"]
-# sop
+                                             #OSP     s ? o
 
-print(lookup_on_sop("Marco", "?var", "o60")) #SOP
 
-#our index is now s -> s52
-#print(get(query[0]))
+                                            #POS      ? p o
+                                                      
 
 # Naive triple extraction 
 #print(naive_lookup(query[0],query[1],query[2]))
