@@ -30,9 +30,6 @@ Pieter a ComputerScientist
 ?p a Person => ?p a ComputerScientist
 ?p hasMaster :CS => ?p a ComputerScientist
 
-
-
-
 ?person a o67
 
 [po]
@@ -46,9 +43,6 @@ Andrei ?p ?o
 
 Andrei ?p o63
 [os]
-
-
-
 
 id1: ['Andrei', 'p29', '063']
 id2: ['Andrei', 'p30', '063']
@@ -66,3 +60,49 @@ index(031) = [id3,id4,id5]
 ['s36', 'p36', 'o36']
 ['s37', 'p37', 'o37']
 ['s38', 'p38', 'o38']
+
+
+
+
+
+
+
+
+o = [[0, o63], 
+     [1, o65],
+     [2, o31], 
+     [3, o49], 
+     [4, o31],
+     [5, o60]]
+
+s = [[0, Andrei],
+    [1, s3],
+    [2, s4],
+    [3, s60]]
+
+p = [[0, p29], 
+     [1, p31], 
+     [2, p32], 
+     [3, p60]]
+
+spo
+pso
+
+spo         
+[Andrei, [ [p29,[0,1]], 
+           [p31,[4]]
+         ]]
+
+[s3, [p31]]
+[s4, [p31,p32]]
+[s60, [p60]]
+
+
+
+
+
+
+
+pos
+
+? p29 o31
