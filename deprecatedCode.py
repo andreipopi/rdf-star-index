@@ -62,3 +62,36 @@ for id, subject in sArr:
 #    print(triple)
 #    store = np.vstack([store, triple])
 #print_store()
+
+
+def get_access_pattern(s,p,o):
+    if ("?" in s) and ("?" in p) and ("?" in o): # ? ? ?
+        return ""
+    if ("?" not in s) and ("?" not in p) and ("?" in o): # var var ?
+        return "sp"
+    if ("?" not in s) and ("?" in p) and ("?" in o): # var ? ?
+        return "s"
+    if ("?" in s) and ("?" not in p) and ("?" not in o):# ? var var
+        return "po"
+    if ("?" not in s) and ("?" in p) and ("?" not in o):#
+        return "os"
+
+def naive_lookup(subj,pred,obj):
+    index = get_access_pattern(subj,pred,obj)
+    matching_triples = np.array([])
+    matching_triples.shape = (0,3)
+    for [s,p,o] in store:
+        if index == "os":
+            if o == obj and s== subj:
+                matching_triples = np.vstack([matching_triples, [s,p,o]])
+        if index == "s":
+            if s== subj:
+                matching_triples = np.vstack([matching_triples, [s,p,o]])
+        if index == "po":
+            if p == pred and o== obj:
+                matching_triples = np.vstack([matching_triples, [s,p,o]])
+    return matching_triples
+
+
+# Naive triple extraction 
+#print(naive_lookup(query[0],query[1],query[2]))
